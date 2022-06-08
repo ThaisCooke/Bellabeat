@@ -1,0 +1,122 @@
+THIS IS THE CAPSTONE PROJECT FOR GOOGLE DATA ANALYTICS CERTIFICATE. I CHOSE THE SECOND OPTION, THE BELLABEAT ANALYSIS.
+
+-- I used Excel Spreadsheets for cleaning, SQL for organizing the data and Tableau for Visualization. I used two csv files: sleepDay_merged and 
+DailyActivity_merged (which contained Total Steps, Distance, Calories and Amount of Activity)
+Excel Spreadsheets was used for removing duplicates, filtering and sorting the data.
+For the Daily Steps data, there were some days that recorded steps as 0. This can be due to the user entering the data manually or forgetting to use the device.
+Those were removed from the analysis. 
+
+
+
+--I did some Data Exploration in SQL. I wanted to find out how many users were on the Daily Activity table, which gave me the result of 33 distinct users:
+
+SELECT 
+COUNT(DISTINCT Id) AS Number_of_users
+	FROM dailyactivity;
+  
+--I did the same for Sleep Day table, which gave me the result of 24 distinct users:
+
+SELECT 
+COUNT(DISTINCT Id) AS Number_of_users
+	FROM dailyactivity;
+
+--(That was a problem, since it is not enough sample)
+
+--How many minutes each participant slept:
+
+SELECT Id, SUM(TotalMinutesAsleep)
+  FROM sleepDay
+  GROUP BY Id 
+
+
+--How many minutes each participant slept using CTE:
+
+WITH cte_sum_asleep (Id,TotalMinutesAsleep) AS
+  (SELECT Id, SUM(TotalMinutesAsleep)
+  FROM sleepDay
+  GROUP BY Id  )
+  SELECT Id, TotalMinutesAsleep
+  FROM cte_sum_asleep
+
+--How many calories each participant burned:
+
+SELECT Id, SUM(Calories)
+  FROM dailyActivity
+  GROUP BY Id
+  
+-- How many calories each participant burned using CTE:
+
+WITH cte_sum_calories (Id,Calories) AS
+  (SELECT Id, SUM(Calories)
+  FROM dailyActivity
+  GROUP BY Id )
+  SELECT Id, calories
+  FROM cte_sum_calories
+  
+--How Many Steps each participant took:
+
+SELECT Id, COUNT (TotalSteps)
+  FROM dailyActivity
+  GROUP BY Id
+
+--How many Steps each participant took using CTE:
+
+WITH cte_sum_steps (Id,TotalSteps) AS
+  (SELECT Id, SUM(TotalSteps)
+  FROM dailyActivity
+  GROUP BY Id )
+  SELECT Id, TotalSteps
+  FROM cte_sum_steps
+
+
+--Relation Between Steps and Calories Burned:
+
+SELECT Id, SUM(TotalSteps) AS Total_Steps, SUM (Calories) AS Total_Calories
+  FROM dailyActivity
+  GROUP BY Id
+  
+--I wanted to see if there was a correlation between sleeping and number of calories burned using inner join:
+
+SELECT DailyActivity.Id, SUM (sleepDay.TotalMinutesAsleep) AS TotalMinutesAsleep, SUM (dailyActivity.calories) AS TotalCalories
+	FROM DailyActivity
+	INNER JOIN SleepDay 
+	on dailyActivity.Id = sleepDay.Id 
+	GROUP BY dailyActivity.Id
+
+
+--Also, I wanted to put together a full table between amount of sleep and amount of exercise also using inner join (minutes asleep vs active or sedentary):
+
+SELECT
+  DailyActivity.VeryActiveMinutes,
+  DailyActivity.FairlyActiveMinutes,
+  DailyActivity.LightlyActiveMinutes,
+  DailyActivity.SedentaryMinutes,
+  DailyActivity.Calories,
+  sleepDay.TotalMinutesAsleep
+  FROM dailyActivity
+  INNER JOIN SleepDay
+  on dailyActivity.Id = sleepDay.Id
+  
+--For finding activity level, number of Steps and calories burnt
+
+SELECT ID, SUM(TotalSteps) AS TotalSteps, SUM(Calories) AS Calories, SUM(VeryActiveMinutes) AS VeryActiveMinutes, 
+SUM(FairlyActiveMinutes) AS FairlyActiveMinutes, SUM(LightlyActiveMinutes) AS LightActiveMinutes, SUM(SedentaryMinutes) AS SedentaryMinutes
+FROM dailyActivity
+WHERE VeryActiveDistance+ModeratelyActiveDistance+LightActiveDistance <> 0 AND VeryActiveMinutes+FairlyActiveMinutes+LightlyActiveMinutes <> 0
+GROUP BY Id
+
+
+
+NEXT: AMOUNT OF ACTIVITY PER DAY (Sedentary, very active, etc) IN PERCENTAGE
+
+??SELECT VeryActiveMinutes, count(*) * 100.0 / (select count(*) from dailyActivity) AS Activity_percentage
+from dailyActivity
+GROUP BY VeryActiveMinutes??
+
+
+
+
+
+
+
+
