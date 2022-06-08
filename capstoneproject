@@ -107,13 +107,23 @@ GROUP BY Id
 
 
 
-NEXT: AMOUNT OF ACTIVITY PER DAY (Sedentary, very active, etc) IN PERCENTAGE
+
+NEXT: AMOUNT OF ACTIVITY PER DAY (Sedentary, very active, etc) IN PERCENTAGE (check those codes tomorrow)
 
 ??SELECT VeryActiveMinutes, count(*) * 100.0 / (select count(*) from dailyActivity) AS Activity_percentage
 from dailyActivity
 GROUP BY VeryActiveMinutes??
 
+??SELECT Id, SUM(VeryActiveMinutes) AS VeryActiveMinutes
+FROM dailyActivity
+GROUP BY Id 
 
+WITH cte_sum_veryactive (Id, VeryActiveMinutes) AS
+(SELECT Id, SUM(VeryActiveMinutes)
+FROM dailyActivity
+GROUP BY Id)
+SELECT Id, VeryActiveMinutes/ 1440 
+FROM cte_sum_veryactive??
 
 
 
