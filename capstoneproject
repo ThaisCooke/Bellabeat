@@ -106,6 +106,30 @@ WHERE VeryActiveDistance+ModeratelyActiveDistance+LightActiveDistance <> 0 AND V
 GROUP BY Id
 
 
+--Amount of activity per day per participant in minutes: 
+
+SELECT Id, SUM (VeryActiveMinutes) AS VeryActive, SUM (FairlyActiveMinutes) AS FairlyActive, 
+SUM (LightlyActiveMinutes) AS LightlyActive, SUM (SedentaryMinutes) AS Sedentary
+  FROM dailyActivity
+  GROUP BY Id
+
+
+--Total Intensity:
+
+
+  SELECT Id, SUM (VeryActiveMinutes) + SUM (LightlyActiveMinutes) + SUM (FairlyActiveMinutes) + SUM (SedentaryMinutes) AS Total_Intensity
+  FROM dailyActivity
+  GROUP BY Id
+
+
+-- Average Intensity:
+
+SELECT Id, AVG (VeryActiveMinutes) + AVG (LightlyActiveMinutes) + AVG (FairlyActiveMinutes) + AVG (SedentaryMinutes) AS Total_Intensity
+  FROM dailyActivity
+  GROUP BY Id
+
+
+
 
 
 NEXT: AMOUNT OF ACTIVITY PER DAY (Sedentary, very active, etc) IN PERCENTAGE (check those codes tomorrow)
