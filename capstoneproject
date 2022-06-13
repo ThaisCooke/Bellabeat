@@ -97,7 +97,28 @@ SELECT Id, SUM(TotalSteps) AS TotalSteps, SUM(Calories) AS Calories
   FROM dailyActivity
   GROUP BY Id
 
+-- Add Day of the Week column to dailyActivity Table:
 
+Alter Table dailyActivity
+ADD day_of_week nvarchar(50)
+
+Update dailyActivity
+SET day_of_week = DATENAME(DW, ActivityDate)
+
+--Total Number of steps on each day of the week
+Select SUM(TotalSteps) as total_steps,
+SUM(TotalDistance) as total_dist,
+SUM(Calories) as total_calories,
+day_of_week
+From dailyActivity
+Group By  day_of_week
+
+-- Time wasted awake in bed
+Select Id, Avg(TotalMinutesAsleep)/60 as avg_sleep_time_h,
+Avg(TotalTimeInBed)/60 as avg_time_bed_h,
+AVG(TotalTimeInBed - TotalMinutesAsleep) as wasted_bed_time_m
+from sleepDay
+Group by Id
 
 
 
