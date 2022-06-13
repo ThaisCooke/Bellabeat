@@ -53,21 +53,6 @@ WITH cte_sum_calories (Id,Calories) AS
   SELECT Id, calories
   FROM cte_sum_calories
   
---How Many Steps each participant took:
-
-SELECT Id, COUNT (TotalSteps)
-  FROM dailyActivity
-  GROUP BY Id
-
---How many Steps each participant took using CTE:
-
-WITH cte_sum_steps (Id,TotalSteps) AS
-  (SELECT Id, SUM(TotalSteps)
-  FROM dailyActivity
-  GROUP BY Id )
-  SELECT Id, TotalSteps
-  FROM cte_sum_steps
-
 
 --Relation Between Steps and Calories Burned:
 
@@ -97,6 +82,7 @@ SELECT
   INNER JOIN SleepDay
   on dailyActivity.Id = sleepDay.Id
   
+  
 --For finding activity level, number of Steps and calories burnt
 
 SELECT ID, SUM(TotalSteps) AS TotalSteps, SUM(Calories) AS Calories, SUM(VeryActiveMinutes) AS VeryActiveMinutes, 
@@ -106,49 +92,10 @@ WHERE VeryActiveDistance+ModeratelyActiveDistance+LightActiveDistance <> 0 AND V
 GROUP BY Id
 
 
---Amount of activity per day per participant in minutes: 
-
-SELECT Id, SUM (VeryActiveMinutes) AS VeryActive, SUM (FairlyActiveMinutes) AS FairlyActive, 
-SUM (LightlyActiveMinutes) AS LightlyActive, SUM (SedentaryMinutes) AS Sedentary
+--Correlation between Total Steps and Total Calories Burned:
+SELECT Id, SUM(TotalSteps) AS TotalSteps, SUM(Calories) AS Calories
   FROM dailyActivity
   GROUP BY Id
-
-
---Total Intensity:
-
-
-  SELECT Id, SUM (VeryActiveMinutes) + SUM (LightlyActiveMinutes) + SUM (FairlyActiveMinutes) + SUM (SedentaryMinutes) AS Total_Intensity
-  FROM dailyActivity
-  GROUP BY Id
-
-
--- Average Intensity:
-
-SELECT Id, AVG (VeryActiveMinutes) + AVG (LightlyActiveMinutes) + AVG (FairlyActiveMinutes) + AVG (SedentaryMinutes) AS Total_Intensity
-  FROM dailyActivity
-  GROUP BY Id
-
-
-
-
-
-NEXT: AMOUNT OF ACTIVITY PER DAY (Sedentary, very active, etc) IN PERCENTAGE (check those codes tomorrow)
-
-??SELECT VeryActiveMinutes, count(*) * 100.0 / (select count(*) from dailyActivity) AS Activity_percentage
-from dailyActivity
-GROUP BY VeryActiveMinutes??
-
-??SELECT Id, SUM(VeryActiveMinutes) AS VeryActiveMinutes
-FROM dailyActivity
-GROUP BY Id 
-
-WITH cte_sum_veryactive (Id, VeryActiveMinutes) AS
-(SELECT Id, SUM(VeryActiveMinutes)
-FROM dailyActivity
-GROUP BY Id)
-SELECT Id, VeryActiveMinutes/ 1440 
-FROM cte_sum_veryactive??
-
 
 
 
