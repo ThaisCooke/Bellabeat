@@ -68,6 +68,13 @@ ADD day_of_week nvarchar(50)
 Update dailyActivity
 SET day_of_week = DATENAME(DW, ActivityDate)
 
+-- Add Day of the Week column to SleepDay Table:
+Alter Table sleepDay
+ADD day_of_week nvarchar(50)
+
+Update sleepDay
+SET day_of_week = DATENAME(DW, SleepDay)
+
 --Total Number of steps on each day of the week
 Select SUM(TotalSteps) as total_steps,
 SUM(TotalDistance) as total_dist,
