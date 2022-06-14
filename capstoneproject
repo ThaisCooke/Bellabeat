@@ -18,40 +18,21 @@ COUNT(DISTINCT Id) AS Number_of_users
 
 SELECT 
 COUNT(DISTINCT Id) AS Number_of_users
-	FROM dailyactivity;
+	FROM sleepDay;
 
 --(That was a problem, since it is not enough sample)
 
---How many minutes each participant slept:
+--How many minutes each participant slept per day on Average:
 
-SELECT Id, SUM(TotalMinutesAsleep)
+SELECT Id, AVG(TotalMinutesAsleep)/60 AS AverageHoursSleep
   FROM sleepDay
   GROUP BY Id 
 
-
---How many minutes each participant slept using CTE:
-
-WITH cte_sum_asleep (Id,TotalMinutesAsleep) AS
-  (SELECT Id, SUM(TotalMinutesAsleep)
-  FROM sleepDay
-  GROUP BY Id  )
-  SELECT Id, TotalMinutesAsleep
-  FROM cte_sum_asleep
-
 --How many calories each participant burned:
 
-SELECT Id, SUM(Calories)
+SELECT Id, SUM(Calories) AS TotalCaloriesBurned
   FROM dailyActivity
   GROUP BY Id
-  
--- How many calories each participant burned using CTE:
-
-WITH cte_sum_calories (Id,Calories) AS
-  (SELECT Id, SUM(Calories)
-  FROM dailyActivity
-  GROUP BY Id )
-  SELECT Id, calories
-  FROM cte_sum_calories
   
 
 --Relation Between Steps and Calories Burned:
@@ -68,34 +49,16 @@ SELECT DailyActivity.Id, SUM (sleepDay.TotalMinutesAsleep) AS TotalMinutesAsleep
 	on dailyActivity.Id = sleepDay.Id 
 	GROUP BY dailyActivity.Id
 
-
---Also, I wanted to put together a full table between amount of sleep and amount of exercise also using inner join (minutes asleep vs active or sedentary):
-
-SELECT
-  DailyActivity.VeryActiveMinutes,
-  DailyActivity.FairlyActiveMinutes,
-  DailyActivity.LightlyActiveMinutes,
-  DailyActivity.SedentaryMinutes,
-  DailyActivity.Calories,
-  sleepDay.TotalMinutesAsleep
-  FROM dailyActivity
-  INNER JOIN SleepDay
-  on dailyActivity.Id = sleepDay.Id
   
   
---For finding activity level, number of Steps and calories burnt
+--For finding activity level per participant:
 
-SELECT ID, SUM(TotalSteps) AS TotalSteps, SUM(Calories) AS Calories, SUM(VeryActiveMinutes) AS VeryActiveMinutes, 
+SELECT ID, SUM(VeryActiveMinutes) AS VeryActiveMinutes, 
 SUM(FairlyActiveMinutes) AS FairlyActiveMinutes, SUM(LightlyActiveMinutes) AS LightActiveMinutes, SUM(SedentaryMinutes) AS SedentaryMinutes
 FROM dailyActivity
 WHERE VeryActiveDistance+ModeratelyActiveDistance+LightActiveDistance <> 0 AND VeryActiveMinutes+FairlyActiveMinutes+LightlyActiveMinutes <> 0
 GROUP BY Id
 
-
---Correlation between Total Steps and Total Calories Burned:
-SELECT Id, SUM(TotalSteps) AS TotalSteps, SUM(Calories) AS Calories
-  FROM dailyActivity
-  GROUP BY Id
 
 -- Add Day of the Week column to dailyActivity Table:
 
