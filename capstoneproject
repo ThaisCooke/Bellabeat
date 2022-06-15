@@ -22,35 +22,23 @@ COUNT(DISTINCT Id) AS Number_of_users
 
 --(That was a problem, since it is not enough sample)
 
---How many minutes each participant slept per day on Average:
+--Adding Day of the week column on Daily Activity:
 
-SELECT Id, AVG(TotalMinutesAsleep)/60 AS AverageHoursSleep
-  FROM sleepDay
-  GROUP BY Id 
+Alter Table dailyActivity
+ADD day_of_week nvarchar(50)
 
---How many calories each participant burned:
+Update dailyActivity
+SET day_of_week = DATENAME(DW, ActivityDate)
 
-SELECT Id, SUM(Calories) AS TotalCaloriesBurned
-  FROM dailyActivity
-  GROUP BY Id
-  
+--Adding Day of the week column on Sleep Day:
 
---Relation Between Steps and Calories Burned:
+Alter Table sleepDay
+ADD day_of_week nvarchar(50)
 
-SELECT Id, SUM(TotalSteps) AS Total_Steps, SUM (Calories) AS Total_Calories
-  FROM dailyActivity
-  GROUP BY Id
-  
---I wanted to see if there was a correlation between sleeping and number of calories burned using inner join:
+Update sleepDay
+SET day_of_week = DATENAME(DW, SleepDay)
 
-SELECT DailyActivity.Id, SUM (sleepDay.TotalMinutesAsleep) AS TotalMinutesAsleep, SUM (dailyActivity.calories) AS TotalCalories
-	FROM DailyActivity
-	INNER JOIN SleepDay 
-	on dailyActivity.Id = sleepDay.Id 
-	GROUP BY dailyActivity.Id
 
-  
-  
 --For finding activity level per participant:
 
 SELECT ID, SUM(VeryActiveMinutes) AS VeryActiveMinutes, 
@@ -59,36 +47,55 @@ FROM dailyActivity
 WHERE VeryActiveDistance+ModeratelyActiveDistance+LightActiveDistance <> 0 AND VeryActiveMinutes+FairlyActiveMinutes+LightlyActiveMinutes <> 0
 GROUP BY Id
 
+-- Which day of the week participants are more active:
 
--- Add Day of the Week column to dailyActivity Table:
+SELECT AVG(VeryActiveMinutes) AS VeryActiveMinutes, 
+AVG(FairlyActiveMinutes) AS FairlyActiveMinutes, AVG(LightlyActiveMinutes) AS LightActiveMinutes, AVG(SedentaryMinutes) AS SedentaryMinutes, day_of_week
+FROM dailyActivity
+WHERE VeryActiveDistance+ModeratelyActiveDistance+LightActiveDistance <> 0 AND VeryActiveMinutes+FairlyActiveMinutes+LightlyActiveMinutes <> 0
+GROUP BY day_of_week
 
-Alter Table dailyActivity
-ADD day_of_week nvarchar(50)
 
-Update dailyActivity
-SET day_of_week = DATENAME(DW, ActivityDate)
+--Average number of steps on each day of the week:
 
--- Add Day of the Week column to SleepDay Table:
-Alter Table sleepDay
-ADD day_of_week nvarchar(50)
-
-Update sleepDay
-SET day_of_week = DATENAME(DW, SleepDay)
-
---Total Number of steps on each day of the week
-Select SUM(TotalSteps) as total_steps,
-SUM(TotalDistance) as total_dist,
-SUM(Calories) as total_calories,
+Select AVG(TotalSteps) as total_steps,
+AVG(TotalDistance) as total_dist,
+AVG(Calories) as total_calories,
 day_of_week
 From dailyActivity
 Group By  day_of_week
 
--- Time wasted awake in bed
+
+--Relation Between Steps and Calories Burned:
+
+  SELECT Id, AVG(TotalSteps) AS Total_Steps, AVG(Calories) AS Total_Calories
+  FROM dailyActivity
+  GROUP BY Id
+
+
+--Average sleeping per day of the week:
+
+Select AVG(TotalMinutesAsleep) as total_sleep,
+day_of_week
+From sleepDay
+Group By  day_of_week
+
+-- Time wasted awake in bed:
+
 Select Id, Avg(TotalMinutesAsleep)/60 as avg_sleep_time_h,
 Avg(TotalTimeInBed)/60 as avg_time_bed_h,
 AVG(TotalTimeInBed - TotalMinutesAsleep) as wasted_bed_time_m
 from sleepDay
 Group by Id
+
+ 
+ --I wanted to see if there was a correlation between sleeping and number of calories burned using inner join:
+
+  SELECT DailyActivity.Id, AVG (sleepDay.TotalMinutesAsleep) AS TotalMinutesAsleep, AVG (dailyActivity.calories) AS TotalCalories
+	FROM DailyActivity
+	INNER JOIN SleepDay 
+	on dailyActivity.Id = sleepDay.Id 
+	GROUP BY dailyActivity.Id
 
 
 
