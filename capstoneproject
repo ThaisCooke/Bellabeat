@@ -82,11 +82,11 @@ Group By  day_of_week
 
 -- Time wasted awake in bed:
 
-Select Id, Avg(TotalMinutesAsleep)/60 as avg_sleep_time_h,
-Avg(TotalTimeInBed)/60 as avg_time_bed_h,
-AVG(TotalTimeInBed - TotalMinutesAsleep) as wasted_bed_time_m
+Select  Avg(TotalMinutesAsleep) as avg_sleep_time,
+Avg(TotalTimeInBed) as avg_time_bed,
+AVG(TotalTimeInBed - TotalMinutesAsleep) as wasted_bed_time, day_of_week
 from sleepDay
-Group by Id
+Group by day_of_week
 
  
  --I wanted to see if there was a correlation between sleeping and number of calories burned using inner join:
