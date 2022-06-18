@@ -41,11 +41,14 @@ SET day_of_week = DATENAME(DW, SleepDay)
 
 --For finding activity level per participant:
 
-SELECT ID, SUM(VeryActiveMinutes) AS VeryActiveMinutes, 
-SUM(FairlyActiveMinutes) AS FairlyActiveMinutes, SUM(LightlyActiveMinutes) AS LightActiveMinutes, SUM(SedentaryMinutes) AS SedentaryMinutes
-FROM dailyActivity
-WHERE VeryActiveDistance+ModeratelyActiveDistance+LightActiveDistance <> 0 AND VeryActiveMinutes+FairlyActiveMinutes+LightlyActiveMinutes <> 0
-GROUP BY Id
+--For finding activity level per participant (percentage):
+	SELECT 
+  SUM(VeryActiveMinutes) / SUM(VeryActiveMinutes + FairlyActiveMinutes + LightlyActiveMinutes + SedentaryMinutes) * 100 AS VeryActivePerc,
+  SUM(FairlyActiveMinutes) / SUM(VeryActiveMinutes + FairlyActiveMinutes + LightlyActiveMinutes + SedentaryMinutes) * 100 AS FairlyPerc,
+  SUM(LightlyActiveMinutes) / SUM(VeryActiveMinutes + FairlyActiveMinutes + LightlyActiveMinutes + SedentaryMinutes) * 100 AS LightlyActivePerc,
+  SUM(SedentaryMinutes) / SUM(VeryActiveMinutes + FairlyActiveMinutes + LightlyActiveMinutes + SedentaryMinutes) * 100 AS SedentaryPerc
+FROM DailyActivity
+
 
 -- Which day of the week participants are more active:
 
