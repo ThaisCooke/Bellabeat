@@ -14,19 +14,26 @@ Those were removed from the analysis.
 
 
 
+
+
 -- I did some Data Exploration in SQL. I wanted to find out how many users were on the Daily Activity table, which gave me the result of 33 distinct users:
+
 
 SELECT 
 COUNT(DISTINCT Id) AS Number_of_users
 	FROM dailyactivity;
   
+  
 -- I did the same for Sleep Day table, which gave me the result of 24 distinct users:
+
 
 SELECT 
 COUNT(DISTINCT Id) AS Number_of_users
 	FROM sleepDay;
 
 -- (That was a problem, since it is not enough sample)
+
+
 
 -- Adding Day of the week column on Daily Activity:
 
@@ -36,6 +43,8 @@ ADD day_of_week nvarchar(50)
 Update dailyActivity
 SET day_of_week = DATENAME(DW, ActivityDate)
 
+
+
 -- Adding Day of the week column on Sleep Day:
 
 Alter Table sleepDay
@@ -43,6 +52,7 @@ ADD day_of_week nvarchar(50)
 
 Update sleepDay
 SET day_of_week = DATENAME(DW, SleepDay)
+
 
 
 -- For finding activity level per participant (percentage):
@@ -54,6 +64,8 @@ SET day_of_week = DATENAME(DW, SleepDay)
 FROM DailyActivity
 
 
+
+
 -- Which day of the week participants are more active:
 
 SELECT AVG(VeryActiveMinutes) AS VeryActiveMinutes, 
@@ -61,6 +73,8 @@ AVG(FairlyActiveMinutes) AS FairlyActiveMinutes, AVG(LightlyActiveMinutes) AS Li
 FROM dailyActivity
 WHERE VeryActiveDistance+ModeratelyActiveDistance+LightActiveDistance <> 0 AND VeryActiveMinutes+FairlyActiveMinutes+LightlyActiveMinutes <> 0
 GROUP BY day_of_week
+
+
 
 
 -- Average number of steps on each day of the week:
@@ -73,11 +87,15 @@ From dailyActivity
 Group By  day_of_week
 
 
+
+
 -- Relation Between Steps and Calories Burned:
 
   SELECT Id, AVG(TotalSteps) AS Total_Steps, AVG(Calories) AS Total_Calories
   FROM dailyActivity
   GROUP BY Id
+
+
 
 
 -- Correlation between sleeping and number of calories burned using inner join:
@@ -87,6 +105,8 @@ Group By  day_of_week
 	INNER JOIN SleepDay 
 	on dailyActivity.Id = sleepDay.Id 
 	GROUP BY dailyActivity.Id
+
+
 
 
 -- Average sleeping per day of the week:
