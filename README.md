@@ -4,8 +4,11 @@ Capstone Project
 THIS IS THE CAPSTONE PROJECT FOR GOOGLE DATA ANALYTICS CERTIFICATE. I CHOSE THE SECOND OPTION, THE BELLABEAT ANALYSIS.
 
 -- I used Excel Spreadsheets for cleaning, SQL for organizing the data and Tableau for Visualization. 
+
 -- I used two csv files: sleepDay_merged and DailyActivity_merged (which contained Total Steps, Distance, Calories and Amount of Activity)
+
 -- Excel Spreadsheets was used for removing duplicates, filtering and sorting the data.
+
 -- For the Daily Steps data, there were some days that recorded steps as 0. This can be due to the user entering the data manually or forgetting to use the device.
 Those were removed from the analysis. 
 
